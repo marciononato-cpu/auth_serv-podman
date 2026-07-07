@@ -1,0 +1,91 @@
+version: "3.8"
+
+services:
+  web:
+    build: .
+    command: bundle exec rails server -b 0.0.0.0 -p 3001
+    volumes:
+      - .:/rails:z
+      - bundle_cache:/usr/local/bundle:z
+    expose:
+      - "3001"
+    env_file: .env
+    secrets:
+      - auth_serv_db_password
+      - auth_serv_smtp_password
+      - auth_serv_admin_password
+      - auth_serv_secret_key_base
+      - auth_serv_jwt_secret
+      - varzea_secret_key_base
+      - varzea_jwt_secret
+      - auth_serv_redis_password
+    depends_on:
+      - db
+      - redis
+    networks:
+      - auth_serv_default
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: auth_dev
+      POSTGRES_DB: auth_dev_db
+      POSTGRES_PASSWORD_FILE: /run/secrets/auth_serv_db_password
+    volumes:
+      - pg_data:/var/lib/postgresql/data:z
+    secrets:
+      - auth_serv_db_password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U auth_dev -d auth_dev_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - auth_serv_default
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data:z
+    secrets:
+      - auth_serv_redis_password
+    command:
+      - sh
+      - -c
+      - exec redis-server --requirepass "$(cat /run/secrets/auth_serv_redis_password)"
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - redis-cli -a "$(cat /run/secrets/auth_serv_redis_password)" ping
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - auth_serv_default
+
+volumes:
+  pg_data:
+  redis_data:
+  bundle_cache:
+
+networks:
+  auth_serv_default:
+    driver: bridge
+
+secrets:
+  auth_serv_db_password:
+    external: true
+  auth_serv_smtp_password:
+    external: true
+  auth_serv_admin_password:
+    external: true
+  auth_serv_secret_key_base:
+    external: true
+  auth_serv_jwt_secret:
+    external: true
+  auth_serv_redis_password:
+    external: true
+  varzea_secret_key_base:
+    external: true
+  varzea_jwt_secret:
+    external: true

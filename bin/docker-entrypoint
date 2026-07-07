@@ -1,0 +1,95 @@
+#!/bin/bash -e
+
+# =============================================================================
+# LABONO Auth - Docker Entrypoint
+# Carrega secrets do Podman (/run/secrets/) e sobrescreve variaveis do .env
+# =============================================================================
+
+SECRET_DIR="/run/secrets"
+REQUIRED_SECRETS=(
+  "auth_serv_db_password"
+  "auth_serv_secret_key_base"
+  "auth_serv_jwt_secret"
+)
+
+# =============================================================================
+# Validacao: verifica se os secrets obrigatorios estao montados
+# =============================================================================
+if [ -d "$SECRET_DIR" ]; then
+  for required in "${REQUIRED_SECRETS[@]}"; do
+    if [ ! -f "$SECRET_DIR/$required" ]; then
+      echo "[ENTRYPOINT] ERRO: Secret obrigatorio ausente: $required"
+      echo "[ENTRYPOINT] Verifique se o secret foi criado com: podman secret create $required"
+      exit 1
+    fi
+  done
+else
+  echo "[ENTRYPOINT] AVISO: Diretorio $SECRET_DIR nao encontrado."
+  echo "[ENTRYPOINT] Continuando com as variaveis do .env"
+fi
+
+# =============================================================================
+# Funcao para URL-encoding (necessario para senhas na URL do Redis)
+# =============================================================================
+url_encode() {
+  local string="$1"
+  local strlen=${#string}
+  local encoded=""
+  local pos c o
+
+  for ((pos = 0; pos < strlen; pos++)); do
+    c="${string:$pos:1}"
+    case "$c" in
+      [-_.~a-zA-Z0-9]) o="$c" ;;
+      *) printf -v o '%%%02X' "'$c" ;;
+    esac
+    encoded+="$o"
+  done
+  echo "$encoded"
+}
+
+# =============================================================================
+# Carregamento de secrets
+# =============================================================================
+if [ -d "$SECRET_DIR" ]; then
+  for secret_file in "$SECRET_DIR"/*; do
+    if [ -f "$secret_file" ]; then
+      secret_name=$(basename "$secret_file")
+      secret_value=$(cat "$secret_file")
+      case "$secret_name" in
+        auth_serv_db_password)
+          export DATABASE_PASSWORD="$secret_value"
+          echo "[ENTRYPOINT] Loaded secret: DATABASE_PASSWORD"
+          ;;
+        auth_serv_smtp_password)
+          export SMTP_PASS="$secret_value"
+          echo "[ENTRYPOINT] Loaded secret: SMTP_PASS"
+          ;;
+        auth_serv_admin_password)
+          export ADMIN_PASSWORD="$secret_value"
+          echo "[ENTRYPOINT] Loaded secret: ADMIN_PASSWORD"
+          ;;
+        auth_serv_secret_key_base)
+          export SECRET_KEY_BASE="$secret_value"
+          echo "[ENTRYPOINT] Loaded secret: SECRET_KEY_BASE"
+          ;;
+        auth_serv_jwt_secret)
+          export JWT_SECRET="$secret_value"
+          echo "[ENTRYPOINT] Loaded secret: JWT_SECRET"
+          ;;
+        auth_serv_redis_password)
+          encoded_pass=$(url_encode "$secret_value")
+          export REDIS_URL="redis://:$encoded_pass@redis:6379/0"
+          echo "[ENTRYPOINT] Loaded secret: REDIS_URL (with URL-encoded password)"
+          ;;
+      esac
+    fi
+  done
+fi
+
+# If running the rails server then create or migrate existing database
+if [[ "$*" == *"rails server"* ]]; then
+  ./bin/rails db:prepare
+fi
+
+exec "${@}"

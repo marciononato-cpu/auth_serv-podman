@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Painel de Controle</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- LOGIN -->
+  <div id="login-page" class="login-container">
+    <div class="login-box">
+      <h1>🔐 Admin</h1>
+      <p>Acesso restrito a administradores</p>
+      <div id="login-error" class="error-msg hidden"></div>
+      <form id="login-form">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="admin@exemplo.com" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Senha</label>
+          <input type="password" id="password" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn-primary" id="btn-login">Entrar</button>
+      </form>
+      <p class="switch-text" style="margin-top: 12px;"><a href="#" onclick="showForgot(); return false">Esqueci minha senha</a></p>
+      <p class="switch-text">Não tem conta? <a href="#" onclick="showRegister(); return false">Criar conta</a></p>
+    </div>
+  </div>
+
+  <!-- REGISTRO -->
+  <div id="register-page" class="login-container hidden">
+    <div class="login-box">
+      <h1>📝 Criar Conta</h1>
+      <p>Cadastre-se para testar o fluxo completo</p>
+      <div id="register-error" class="error-msg hidden"></div>
+      <div id="register-success" class="success-msg hidden"></div>
+      <form id="register-form">
+        <div class="form-group">
+          <label for="reg-email">Email</label>
+          <input type="email" id="reg-email" placeholder="seu@email.com" required>
+        </div>
+        <div class="form-group">
+          <label for="reg-password">Senha</label>
+          <input type="password" id="reg-password" placeholder="Mínimo 8 caracteres" required minlength="8">
+        </div>
+        <div class="form-group">
+          <label for="reg-password-confirm">Confirmar Senha</label>
+          <input type="password" id="reg-password-confirm" placeholder="Repita a senha" required>
+        </div>
+        <button type="submit" class="btn-primary" id="btn-register">Criar Conta</button>
+      </form>
+      <p class="switch-text">Já tem conta? <a href="#" onclick="showLogin(); return false">Fazer login</a></p>
+    </div>
+  </div>
+
+  <!-- CONFIRMAÇÃO DE EMAIL -->
+  <div id="confirm-page" class="login-container hidden">
+    <div class="login-box">
+      <h1>📧 Confirmar Email</h1>
+      <p>Digite o código de 6 dígitos enviado para seu email</p>
+      <div id="confirm-email-display" class="email-display"></div>
+      <div id="confirm-error" class="error-msg hidden"></div>
+      <div id="confirm-success" class="success-msg hidden"></div>
+      <form id="confirm-form">
+        <div class="form-group">
+          <label for="confirm-code">Código de Confirmação</label>
+          <input type="text" id="confirm-code" placeholder="000000" required maxlength="6" minlength="6"
+                 style="text-align: center; font-size: 24px; letter-spacing: 8px; font-weight: 700;">
+        </div>
+        <button type="submit" class="btn-primary" id="btn-confirm">Confirmar Email</button>
+      </form>
+      <p class="switch-text" style="margin-top: 16px;">
+        Não recebeu? <a href="#" onclick="resendCode(); return false">Reenviar código</a>
+      </p>
+      <p class="switch-text"><a href="#" onclick="showLogin(); return false">Voltar ao login</a></p>
+    </div>
+  </div>
+
+  <!-- ESQUECI SENHA -->
+  <div id="forgot-page" class="login-container hidden">
+    <div class="login-box">
+      <h1>🔑 Recuperar Senha</h1>
+      <p>Digite seu email para receber o código de redefinição</p>
+      <div id="forgot-error" class="error-msg hidden"></div>
+      <div id="forgot-success" class="success-msg hidden"></div>
+      <form id="forgot-form">
+        <div class="form-group">
+          <label for="forgot-email">Email</label>
+          <input type="email" id="forgot-email" placeholder="seu@email.com" required>
+        </div>
+        <button type="submit" class="btn-primary" id="btn-forgot">Enviar Código</button>
+      </form>
+      <p class="switch-text" style="margin-top: 12px;">
+        Já tem o código? <a href="#" onclick="showReset(); return false">Redefinir senha</a>
+      </p>
+      <p class="switch-text"><a href="#" onclick="showLogin(); return false">Voltar ao login</a></p>
+    </div>
+  </div>
+
+  <!-- REDEFINIR SENHA -->
+  <div id="reset-page" class="login-container hidden">
+    <div class="login-box">
+      <h1>🔑 Redefinir Senha</h1>
+      <p>Digite o código recebido por email e sua nova senha</p>
+      <div id="reset-error" class="error-msg hidden"></div>
+      <div id="reset-success" class="success-msg hidden"></div>
+      <form id="reset-form">
+        <div class="form-group">
+          <label for="reset-email">Email</label>
+          <input type="email" id="reset-email" placeholder="seu@email.com" required>
+        </div>
+        <div class="form-group">
+          <label for="reset-code">Código de Redefinição</label>
+          <input type="text" id="reset-code" placeholder="Cole o código do email" required>
+        </div>
+        <div class="form-group">
+          <label for="reset-password">Nova Senha</label>
+          <input type="password" id="reset-password" placeholder="Mínimo 8 caracteres" required minlength="8">
+        </div>
+        <div class="form-group">
+          <label for="reset-password-confirm">Confirmar Nova Senha</label>
+          <input type="password" id="reset-password-confirm" placeholder="Repita a nova senha" required>
+        </div>
+        <button type="submit" class="btn-primary" id="btn-reset">Redefinir Senha</button>
+      </form>
+      <p class="switch-text"><a href="#" onclick="showLogin(); return false">Voltar ao login</a></p>
+    </div>
+  </div>
+
+  <!-- DASHBOARD (oculto até login) -->
+  <div id="dashboard-page" class="hidden">
+    <!-- Header -->
+    <div class="header">
+      <div class="header-inner">
+        <div class="logo">Admin <span>Painel</span></div>
+        <div class="user-badge">
+          <span id="user-email"></span>
+          <button class="btn-logout" onclick="logout()">Sair</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Conteúdo -->
+    <div class="container">
+
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card blue">
+          <div class="stat-value" id="stat-total">—</div>
+          <div class="stat-label">Total de Usuários</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-value" id="stat-confirmed">—</div>
+          <div class="stat-label">Confirmados</div>
+        </div>
+        <div class="stat-card yellow">
+          <div class="stat-value" id="stat-pending">—</div>
+          <div class="stat-label">Pendentes</div>
+        </div>
+        <div class="stat-card red">
+          <div class="stat-value" id="stat-admins">—</div>
+          <div class="stat-label">Administradores</div>
+        </div>
+      </div>
+
+      <!-- Usuários -->
+      <div class="users-section">
+        <div class="flex justify-between items-center" style="margin-bottom: 16px;">
+          <h2>Usuários Cadastrados</h2>
+          <input type="text" class="search-box" id="search-box" placeholder="Buscar por email..." style="width: 300px; margin-bottom: 0;">
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Criado em</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="users-table-body">
+              <tr>
+                <td colspan="6" class="loading"><div class="spinner"></div> Carregando...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div id="pagination" class="flex justify-between items-center mt-4 text-sm text-muted"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

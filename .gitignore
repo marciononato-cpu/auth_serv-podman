@@ -1,0 +1,61 @@
+# .env files (environment variables)
+.env
+.env.local
+.env.production
+.env.staging
+.env.dev
+.env.development
+.env.staging.local
+.env.production.local
+
+# Rails master key and credentials
+config/master.key
+config/credentials.yml.enc
+config/credentials/production.yml.enc
+config/credentials/development.yml.enc
+
+# Ruby / Bundle
+vendor/
+vendor/bundle/
+
+# Logs
+log/
+
+# PID files
+tmp/
+pids/
+*.pid
+
+# Storage (database, uploads, cache)
+storage/
+tmp/storage/
+
+# Database
+*.sqlite3
+*.sqlite3-journal
+db/*.log
+
+# Migrations desabilitadas (renomeadas com sufixo .SKIP)
+*.rb.SKIP
+
+# Docker
+.dockerenv
+
+# Kamal (nao usado neste projeto)
+.kamal/
+
+# LDAP
+ldap/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Nginx
+/var/www/html/

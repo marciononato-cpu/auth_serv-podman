@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verificar Código — LABONO</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #e2e8f0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .container {
+      width: 100%;
+      max-width: 420px;
+      padding: 1rem;
+    }
+    .card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 2rem;
+    }
+    .logo { text-align: center; font-size: 2.5rem; margin-bottom: 0.5rem; }
+    h1 {
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    p.subtitle {
+      text-align: center;
+      color: #94a3b8;
+      font-size: 0.9rem;
+      margin-bottom: 0.25rem;
+    }
+    p.email-display {
+      text-align: center;
+      color: #60a5fa;
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      word-break: break-all;
+    }
+    .flash-alert {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+    .flash-notice {
+      background: rgba(34, 197, 94, 0.15);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      color: #86efac;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #94a3b8;
+      margin-bottom: 0.4rem;
+    }
+    .code-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      color: #e2e8f0;
+      font-size: 1.75rem;
+      letter-spacing: 8px;
+      font-weight: 700;
+      text-align: center;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .code-input:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+    .code-input::placeholder { color: #475569; letter-spacing: normal; font-weight: 400; font-size: 1rem; }
+    .btn {
+      width: 100%;
+      padding: 0.75rem;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn:hover { background: #2563eb; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .footer {
+      text-align: center;
+      margin-top: 1.25rem;
+      font-size: 0.85rem;
+      color: #64748b;
+    }
+    .footer a { color: #60a5fa; text-decoration: none; }
+    .footer a:hover { text-decoration: underline; }
+    .resend-link {
+      display: block;
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.85rem;
+    }
+    .resend-link a { color: #94a3b8; text-decoration: none; }
+    .resend-link a:hover { color: #60a5fa; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="logo">✉️</div>
+      <h1>Código de Verificação</h1>
+      <p class="subtitle">Enviamos um código de 6 dígitos para</p>
+      <p class="email-display"><%= @email %></p>
+
+      <% if flash[:alert] %>
+        <div class="flash-alert"><%= flash[:alert] %></div>
+      <% end %>
+      <% if flash[:notice] %>
+        <div class="flash-notice"><%= flash[:notice] %></div>
+      <% end %>
+
+      <%= form_tag email_verification_verify_code_path, class: "form" do %>
+        <%= hidden_field_tag :email, @email %>
+
+        <div class="form-group">
+          <label for="code">Código de 6 dígitos</label>
+          <%= text_field_tag :code, nil,
+                placeholder: "000000",
+                class: "code-input",
+                required: true,
+                maxlength: 6,
+                minlength: 6,
+                autofocus: true,
+                autocomplete: "one-time-code",
+                inputmode: "numeric",
+                pattern: "[0-9]*" %>
+        </div>
+
+        <%= submit_tag "Verificar Código", class: "btn" %>
+      <% end %>
+
+      <div class="resend-link">
+        <%= form_tag email_verification_request_code_path, method: :post, style: "display: inline;" do %>
+          <%= hidden_field_tag :email, @email %>
+          <p>Não recebeu? 
+            <button type="submit" style="background: none; border: none; color: #94a3b8; text-decoration: underline; cursor: pointer; font-size: 0.85rem; padding: 0; font-family: inherit;">
+              Reenviar código
+            </button>
+          </p>
+        <% end %>
+      </div>
+
+      <div class="footer">
+        <p><%= link_to "← Voltar e digitar outro email", email_verification_path %></p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

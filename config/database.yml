@@ -1,0 +1,33 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  # O Ambiente DEVE prover DATABASE_PASSWORD (ou POSTGRES_PASSWORD) em produção.
+  # Sem fallback hardcoded: em prod, o docker-entrypoint injeta via Podman Secret.
+  host: <%= ENV.fetch('DATABASE_HOST') { ENV.fetch('POSTGRES_HOST') { '127.0.0.1' } } %>
+  port: <%= ENV.fetch('DATABASE_PORT') { ENV.fetch('POSTGRES_PORT') { 5432 } } %>
+  username: <%= ENV.fetch('DATABASE_USER') { ENV.fetch('POSTGRES_USER') { 'auth_dev' } } %>
+  password: <%= ENV.fetch('DATABASE_PASSWORD') { ENV.fetch('POSTGRES_PASSWORD') } %>
+  max_connections: <%= ENV.fetch('RAILS_MAX_THREADS') { 5 } %>
+
+development:
+  primary:
+    <<: *default
+    database: <%= ENV.fetch('POSTGRES_DB') { 'app_development' } %>
+
+test:
+  primary:
+    <<: *default
+    database: app_test
+
+production:
+  primary:
+    <<: *default
+    database: <%= ENV.fetch('POSTGRES_DB') { ENV.fetch('DATABASE_NAME') { 'app_production' } } %>
+  cache:
+    <<: *default
+    database: <%= ENV.fetch('POSTGRES_DB') { ENV.fetch('DATABASE_NAME') { 'app_production' } } %>_cache
+    migrations_paths: db/cache_migrate
+  queue:
+    <<: *default
+    database: <%= ENV.fetch('POSTGRES_DB') { ENV.fetch('DATABASE_NAME') { 'app_production' } } %>_queue
+    migrations_paths: db/queue_migrate

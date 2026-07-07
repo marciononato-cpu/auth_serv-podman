@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
+    .container { max-width: 500px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    h1 { color: #333; text-align: center; }
+    .code { font-size: 28px; text-align: center; color: #dc2626; font-weight: bold; letter-spacing: 6px; padding: 15px; background: #fef2f2; border-radius: 8px; margin: 15px 0; }
+    .warning { background: #fff3cd; border: 1px solid #ffc107; padding: 12px; border-radius: 6px; margin: 15px 0; color: #856404; }
+    p { color: #666; line-height: 1.6; }
+    .footer { text-align: center; margin-top: 30px; color: #999; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔐 Redefinição de Senha de Administrador</h1>
+
+    <p>Olá, <strong><%= @user.email %></strong>!</p>
+
+    <p>Recebemos uma solicitação de redefinição de senha administrativa.</p>
+
+    <div class="warning">
+      <strong>⚠️ Atenção:</strong> Esta é uma operação sensível. Ambos os códigos abaixo são necessários para prosseguir.
+    </div>
+
+    <p><strong>Código 1:</strong></p>
+    <div class="code"><%= @code1 %></div>
+
+    <p><strong>Código 2:</strong></p>
+    <div class="code"><%= @code2 %></div>
+
+    <p>Os códigos expiram em <strong>15 minutos</strong>.</p>
+
+    <p>Se você não solicitou essa redefinição, ignore este email e entre em contato com o suporte imediatamente.</p>
+
+    <div class="footer">
+      <p>Auth Service &copy; 2026 — Email automático, não responda.</p>
+    </div>
+  </div>
+</body>
+</html>
