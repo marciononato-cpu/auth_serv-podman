@@ -11,7 +11,7 @@ gem "dotenv-rails"
 gem "bootsnap", require: false
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 gem "omniauth", "~> 2.0"
-gem "omniauth-google-oauth2", "~> 1.0"
+gem "omniauth-google-oauth2", "~> 1.2"
 gem "omniauth-apple", "~> 1.4"
 
 group :development, :test do
